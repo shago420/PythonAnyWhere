@@ -4,30 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Python IO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #24292e;
+            color: #fff;
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #2d333b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #messages {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            background-color: #373e47;
+        }
+
+        .message-text {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .message-info {
+            color: #ccc;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        #messageForm {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #4f5764;
+            border-radius: 25px;
+            font-size: 16px;
+            margin-right: 10px;
+            outline: none;
+            background-color: #2d333b;
+            color: #fff;
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #sendButton:hover {
+            background-color: #0056b3;
+        }
+
+        #clearButton {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+            margin-left: 10px;
+        }
+
+        #clearButton:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <h1>Socket IO</h1>
-    <ul id="messages"></ul>
-    <form id="messageForm1" action="">
-       <input type="text" id="messageInput" autocomplete="off">
-       <button>Send</button> 
-    </form>
-</body>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-<script>
-    var socket = io.connect('htttp://'+ document.domain + ':' + location.port);
+    <div id="container">
+        <h1>Socket IO Chat</h1>
+        <ul id="messages"></ul>
+        <form id="messageForm">
+            <input type="text" id="messageInput" autocomplete="off" placeholder="Type a message...">
+            <button type="submit" id="sendButton">Send</button>
+            <button type="button" id="clearButton">Clear Chat</button>
+        </form>
+    </div>
 
-    document.getElementById('messageForm1').onsubmit = function(){
-        event.preventDefault();
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
         var messageInput = document.getElementById("messageInput");
-        socket.emit('message', messageInput.value);
-        messageInput.value = "";
-    }
+        var sendButton = document.getElementById("sendButton");
+        var clearButton = document.getElementById("clearButton");
 
-    socket.on('message', function(msg){
-        var ul = document.getElementById("messages")
-        var li = document.createElement("li");
-        li.appendChild(document.createTextNode(msg))
-    })
-</script>
+        sendButton.onclick = sendMessage;
+        clearButton.onclick = clearChat;
+
+        function sendMessage(event) {
+            event.preventDefault(); // Evita el envío por defecto del formulario
+            var message = messageInput.value.trim();
+            if (message !== "") {
+                socket.emit('message', message);
+                messageInput.value = "";
+            }
+        }
+
+        function clearChat() {
+            var messages = document.getElementById("messages");
+            messages.innerHTML = "";
+        }
+
+        socket.on('message', function(data) {
+            var messages = document.getElementById("messages");
+            var li = document.createElement("li");
+            var messageText = document.createElement("div");
+            messageText.classList.add("message-text");
+            messageText.textContent = data.message; // Aquí se obtiene el mensaje correctamente
+            var messageInfo = document.createElement("div");
+            messageInfo.classList.add("message-info");
+            messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username; // Aquí se debería obtener el nombre de usuario si lo tienes
+            li.appendChild(messageText);
+            li.appendChild(messageInfo);
+            li.classList.add("message");
+            messages.appendChild(li);
+        });
+
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            return hours + ":" + minutes;
+        }
+    </script>
+</body>
 </html>
