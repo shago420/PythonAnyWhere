@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Python IO</title>
+</head>
+<body>
+    <h1>Socket IO</h1>
+    <ul id="messages"></ul>
+    <form id="messageForm1" action="">
+       <input type="text" id="messageInput" autocomplete="off">
+       <button>Send</button> 
+    </form>
+</body>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script>
+    var socket = io.connect('htttp://'+ document.domain + ':' + location.port);
+
+    document.getElementById('messageForm1').onsubmit = function(){
+        event.preventDefault();
+        var messageInput = document.getElementById("messageInput");
+        socket.emit('message', messageInput.value);
+        messageInput.value = "";
+    }
+
+    socket.on('message', function(msg){
+        var ul = document.getElementById("messages")
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(msg))
+    })
+</script>
+</html>
