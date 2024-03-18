@@ -33,12 +33,17 @@
             margin: 0;
         }
 
-        .message {
+        .message-container {
             margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .message {
             padding: 10px;
             border-radius: 8px;
             max-width: 80%;
-            background-color: #373e47;
+            clear: both;
+            overflow-wrap: break-word;
         }
 
         .message-text {
@@ -50,6 +55,25 @@
             color: #ccc;
             font-size: 12px;
             margin-top: 5px;
+            float: right;
+        }
+
+        .message-from-me .message {
+            background-color: #007bff;
+            float: right;
+        }
+
+        .message-from-me .message-info {
+            float: left;
+        }
+
+        .message-from-others .message {
+            background-color: #373e47;
+            float: left;
+        }
+
+        .message-from-others .message-info {
+            float: right;
         }
 
         #messageForm {
@@ -123,10 +147,14 @@
         clearButton.onclick = clearChat;
 
         function sendMessage(event) {
-            event.preventDefault(); // Evita el envío por defecto del formulario
+            event.preventDefault();
             var message = messageInput.value.trim();
             if (message !== "") {
-                socket.emit('message', message);
+                var data = {
+                    username: "Usuario", // Aquí puedes obtener el nombre de usuario de alguna manera
+                    message: message
+                };
+                socket.emit('message', data);
                 messageInput.value = "";
             }
         }
@@ -139,15 +167,22 @@
         socket.on('message', function(data) {
             var messages = document.getElementById("messages");
             var li = document.createElement("li");
+            var messageContainer = document.createElement("div");
             var messageText = document.createElement("div");
-            messageText.classList.add("message-text");
-            messageText.textContent = data.message; // Aquí se obtiene el mensaje correctamente
             var messageInfo = document.createElement("div");
+
+            messageText.textContent = data.message;
+            messageText.classList.add("message-text");
+            messageContainer.appendChild(messageText);
+
+            messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username;
             messageInfo.classList.add("message-info");
-            messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username; // Aquí se debería obtener el nombre de usuario si lo tienes
-            li.appendChild(messageText);
-            li.appendChild(messageInfo);
-            li.classList.add("message");
+            messageContainer.appendChild(messageInfo);
+
+            messageContainer.classList.add("message");
+            messageContainer.classList.add(data.fromMe ? "message-from-me" : "message-from-others");
+
+            li.appendChild(messageContainer);
             messages.appendChild(li);
         });
 
