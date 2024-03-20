@@ -2,22 +2,23 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #222;
-    color: #fff;
+    background-color: #222; /* Color de fondo oscuro */
+    color: #fff; /* Color del texto */
 }
 
 #container {
     max-width: 600px;
     margin: 0 auto;
-    background-color: #444;
+    background-color: #37474f; /* Color de fondo de la caja de chat */
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .chat-header {
     text-align: center;
     margin-bottom: 20px;
+    color: #fff; /* Color del texto del título */
 }
 
 .chat-body {
@@ -29,63 +30,48 @@ body {
 .message {
     padding: 10px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* Espacio entre mensajes */
     word-wrap: break-word;
     clear: both;
     width: auto;
     position: relative;
-}
-
-.my-message {
-    background-color: #007bff;
-    float: left;
-}
-
-.other-message {
-    background-color: #373e47;
-    float: right;
+    background-color: #e2ffc7; /* Color de fondo del mensaje */
+    display: block; /* Cambiamos de inline-block a block */
+    overflow: hidden; /* Para que la hora no sobresalga del mensaje */
+    color: #000; /* Color del texto del mensaje */
 }
 
 .timestamp {
-    color: #aaa;
     font-size: 10px; /* Tamaño de la hora */
     position: absolute;
-    bottom: -20px; /* Ajustamos la posición inferior */
-    left: 0;
-}
-
-.delete-button {
-    color: #ff5151;
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    position: absolute;
     bottom: 0;
-    right: 0;
-    cursor: pointer;
-    margin: 5px; /* Espacio alrededor del botón */
+    right: 0; /* Posicionamos la hora en la esquina derecha */
+    background-color: #4caf50; /* Fondo del bloque de la hora */
+    color: #fff; /* Color del texto de la hora */
+    padding: 3px 6px; /* Espaciado interno de la hora */
+    border-top-left-radius: 5px; /* Ajustamos la esquina superior izquierda para que no sea muy puntiaguda */
 }
 
-.delete-button:hover {
-    color: #fff;
+.message-input-container {
+    position: relative;
 }
 
 .message-input {
-    width: calc(100% - 50px);
+    width: calc(100% - 100px); /* Reducimos el ancho del input para dar espacio a los botones */
     padding: 10px;
-    border: 1px solid #555;
+    border: 1px solid #ccc; /* Borde del campo de entrada */
     border-radius: 25px;
     font-size: 16px;
     margin-right: 10px;
     outline: none;
-    background-color: #333;
-    color: #fff;
+    background-color: #fff; /* Color de fondo del campo de entrada */
+    color: #000; /* Color del texto del campo de entrada */
+    float: left; /* Alineamos a la izquierda */
 }
 
-.send-button,
-.clear-button {
+.send-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #4caf50; /* Color del botón de enviar similar a WhatsApp */
     color: #fff;
     border: none;
     border-radius: 25px;
@@ -93,13 +79,28 @@ body {
     font-size: 16px;
     outline: none;
     transition: background-color 0.3s ease;
+    float: right; /* Alineamos a la izquierda */
+    margin-top: -40px; /* Espacio superior */
 }
 
-.send-button:hover,
-.clear-button:hover {
-    background-color: #0056b3;
+.send-button:hover {
+    background-color: #45a049; /* Cambio de color al pasar el mouse */
 }
 
 .clear-button {
-    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #f44336; /* Color del botón de eliminar similar a WhatsApp */
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease;
+    width: calc(100% + 5px); /* Ancho completo */
+    margin-top: 10px; /* Espacio superior */
+}
+
+.clear-button:hover {
+    background-color: #d32f2f; /* Cambio de color al pasar el mouse */
 }

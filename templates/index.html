@@ -13,9 +13,11 @@
         </div>
         <div class="chat-body" id="messages"></div>
         <div class="message-form">
-            <input type="text" class="message-input" id="messageInput" autocomplete="off" placeholder="Type a message...">
-            <button type="submit" class="send-button" id="sendButton">Send</button>
-            <button type="button" class="clear-button" id="clearButton">Clear Chat</button>
+            <div class="message-input-container">
+                <input type="text" class="message-input" id="messageInput" autocomplete="off" placeholder="Type a message...">
+                <button type="submit" class="send-button" id="sendButton">Send</button>
+            </div>
+            <button type="button" class="clear-button" id="clearButton">Delete Chat</button>
         </div>
     </div>
 
@@ -42,7 +44,6 @@
             var message = messageInput.value.trim();
             if (message !== "") {
                 var data = {
-                    username: currentUser,
                     message: message
                 };
                 socket.emit('message', data);
@@ -55,7 +56,6 @@
             var messageContainer = document.createElement("div");
             var messageText = document.createElement("div");
             var messageInfo = document.createElement("div");
-            var deleteButton = document.createElement("button");
     
             messageText.textContent = data.message;
             messageText.classList.add("message-text");
@@ -67,22 +67,14 @@
                 messageContainer.classList.add("other-message");
             }
     
-            messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username;
-            messageInfo.classList.add("message-info");
+            messageInfo.textContent = getCurrentTime();
+            messageInfo.classList.add("timestamp");
     
-            deleteButton.textContent = "Delete";
-            deleteButton.classList.add("delete-button");
-            deleteButton.addEventListener("click", function() {
-                deleteMessage(messageContainer);
-            });
-    
-            messageContainer.appendChild(messageInfo);
             messageContainer.appendChild(messageText);
+            messageContainer.appendChild(messageInfo);
+    
             messages.appendChild(messageContainer);
             messages.scrollTop = messages.scrollHeight; // Scroll hasta el último mensaje
-    
-            // Añadir el botón delete fuera del contenedor del mensaje
-            messageContainer.appendChild(deleteButton);
         });
     
         function getCurrentTime() {
@@ -97,10 +89,6 @@
         function clearChat() {
             var messages = document.getElementById("messages");
             messages.innerHTML = "";
-        }
-    
-        function deleteMessage(messageContainer) {
-            messageContainer.remove();
         }
     </script>
 </body>
