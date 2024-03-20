@@ -55,7 +55,6 @@
             var messageContainer = document.createElement("div");
             var messageText = document.createElement("div");
             var messageInfo = document.createElement("div");
-            var messageActions = document.createElement("div");
             var deleteButton = document.createElement("button");
     
             messageText.textContent = data.message;
@@ -71,22 +70,19 @@
             messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username;
             messageInfo.classList.add("message-info");
     
-            messageActions.classList.add("message-actions");
-            if (data.username === currentUser) {
-                deleteButton.textContent = "Delete";
-                deleteButton.classList.add("delete-button");
-                deleteButton.addEventListener("click", function() {
-                    deleteMessage(messageContainer);
-                });
-                messageActions.appendChild(deleteButton);
-            }
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete-button");
+            deleteButton.addEventListener("click", function() {
+                deleteMessage(messageContainer);
+            });
     
-            messageContainer.appendChild(messageText);
             messageContainer.appendChild(messageInfo);
-            messageContainer.appendChild(messageActions);
-    
+            messageContainer.appendChild(messageText);
             messages.appendChild(messageContainer);
             messages.scrollTop = messages.scrollHeight; // Scroll hasta el último mensaje
+    
+            // Añadir el botón delete fuera del contenedor del mensaje
+            messageContainer.appendChild(deleteButton);
         });
     
         function getCurrentTime() {
