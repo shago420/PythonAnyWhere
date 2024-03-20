@@ -4,7 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Python IO</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #222; /* Color de fondo oscuro */
+            color: #fff; /* Color del texto */
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #37474f; /* Color de fondo de la caja de chat */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff; /* Color del texto del título */
+        }
+
+        .chat-body {
+            overflow-y: auto;
+            max-height: 300px;
+            padding: 10px;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px; /* Espacio entre mensajes */
+            word-wrap: break-word;
+            clear: both;
+            width: auto;
+            position: relative;
+            background-color: #e2ffc7; /* Color de fondo del mensaje */
+            display: block; /* Cambiamos de inline-block a block */
+            overflow: hidden; /* Para que la hora no sobresalga del mensaje */
+            color: #000; /* Color del texto del mensaje */
+        }
+
+        .timestamp {
+            font-size: 10px; /* Tamaño de la hora */
+            position: absolute;
+            bottom: 0;
+            right: 0; /* Posicionamos la hora en la esquina derecha */
+            background-color: #4caf50; /* Fondo del bloque de la hora */
+            color: #fff; /* Color del texto de la hora */
+            padding: 3px 6px; /* Espaciado interno de la hora */
+            border-top-left-radius: 5px; /* Ajustamos la esquina superior izquierda para que no sea muy puntiaguda */
+        }
+
+        .message-input-container {
+            position: relative;
+        }
+
+        .message-input {
+            width: calc(100% - 100px); /* Reducimos el ancho del input para dar espacio a los botones */
+            padding: 10px;
+            border: 1px solid #ccc; /* Borde del campo de entrada */
+            border-radius: 25px;
+            font-size: 16px;
+            margin-right: 10px;
+            outline: none;
+            background-color: #fff; /* Color de fondo del campo de entrada */
+            color: #000; /* Color del texto del campo de entrada */
+            float: left; /* Alineamos a la izquierda */
+        }
+
+        .send-button {
+            padding: 10px 20px;
+            background-color: #4caf50; /* Color del botón de enviar similar a WhatsApp */
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            float: right; /* Alineamos a la izquierda */
+            margin-top: -40px; /* Espacio superior */
+        }
+
+        .send-button:hover {
+            background-color: #45a049; /* Cambio de color al pasar el mouse */
+        }
+
+        .clear-button {
+            padding: 10px 20px;
+            background-color: #f44336; /* Color del botón de eliminar similar a WhatsApp */
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            width: calc(100% + 5px); /* Ancho completo */
+            margin-top: 10px; /* Espacio superior */
+        }
+
+        .clear-button:hover {
+            background-color: #d32f2f; /* Cambio de color al pasar el mouse */
+        }
+
+        .context-menu {
+            position: fixed;
+            z-index: 1000;
+            background-color: #333; /* Color de fondo del menú */
+            color: #fff; /* Color del texto del menú */
+            border-radius: 5px; /* Borde redondeado */
+            padding: 5px 0; /* Espaciado interno */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Sombra */
+        }
+
+        .context-menu-option {
+            padding: 8px 12px; /* Espaciado interno de las opciones */
+            cursor: pointer; /* Cursor al pasar sobre las opciones */
+        }
+
+        .context-menu-option:hover {
+            background-color: #555; /* Cambio de color al pasar el mouse sobre las opciones */
+        }
+
+        /* Agregar sombreado y margen a los mensajes seleccionados */
+        .message.selected {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombreado */
+            margin: 10px; /* Margen */
+        }
+
+        /* Estilo mejorado para el botón de eliminar seleccionado */
+        #deleteButton {
+            display: none;
+            padding: 10px 20px;
+            background-color: #ff6659; /* Color del botón de eliminar seleccionado */
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            margin-top: 10px; /* Espacio superior */
+        }
+
+        #deleteButton:hover {
+            background-color: #e63a32; /* Cambio de color al pasar el mouse */
+        }
+    </style>
 </head>
 <body>
     <div id="container">
@@ -24,6 +175,127 @@
     </div>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-    <script src="/static/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var selectedMessages = []; // Almacenar mensajes seleccionados
+
+            // Escuchar eventos de clic en los mensajes
+            document.getElementById('messages').addEventListener('click', function (event) {
+                // Verificar si el objetivo del clic es un mensaje
+                if (event.target && event.target.classList.contains('message-text')) {
+                    var message = event.target.closest('.message');
+                    
+                    // Alternar selección del mensaje
+                    if (message.classList.contains('selected')) {
+                        message.classList.remove('selected');
+                        var index = selectedMessages.indexOf(message);
+                        if (index !== -1) selectedMessages.splice(index, 1);
+                    } else {
+                        message.classList.add('selected');
+                        selectedMessages.push(message);
+                    }
+
+                    // Mostrar botón de eliminar si hay mensajes seleccionados
+                    if (selectedMessages.length > 0) {
+                        showDeleteButton();
+                    } else {
+                        hideDeleteButton();
+                    }
+                }
+            });
+
+            // Función para mostrar el botón de eliminar
+            function showDeleteButton() {
+                var deleteButton = document.getElementById('deleteButton');
+                if (deleteButton) {
+                    deleteButton.style.display = 'block';
+                }
+            }
+
+            // Función para ocultar el botón de eliminar
+            function hideDeleteButton() {
+                var deleteButton = document.getElementById('deleteButton');
+                if (deleteButton) {
+                    deleteButton.style.display = 'none';
+                }
+            }
+
+            // Evento para eliminar el mensaje seleccionado al hacer clic en el botón de eliminar
+            document.getElementById('deleteButton').addEventListener('click', function() {
+                selectedMessages.forEach(function (message) {
+                    message.remove();
+                });
+                selectedMessages = []; // Limpiar mensajes seleccionados
+                hideDeleteButton();
+            });
+        });
+
+        // Obtener el nombre de usuario de alguna manera (aquí lo establecemos manualmente)
+        var currentUser = "Usuario";
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var messageInput = document.getElementById("messageInput");
+        var sendButton = document.getElementById("sendButton");
+        var clearButton = document.getElementById("clearButton");
+
+        sendButton.onclick = sendMessage;
+        clearButton.onclick = clearChat;
+        messageInput.addEventListener("keypress", function(event) {
+            if (event.keyCode === 13) {
+                sendMessage(event);
+            }
+        });
+
+        // Función para enviar un mensaje
+        function sendMessage(event) {
+            event.preventDefault();
+            var message = messageInput.value.trim();
+            if (message !== "") {
+                var data = {
+                    message: message
+                };
+                socket.emit('message', data);
+                messageInput.value = "";
+            }
+        }
+
+        // Escuchar mensajes recibidos y agregarlos al contenedor de mensajes
+        socket.on('message', function(data) {
+            var messages = document.getElementById("messages");
+            var messageContainer = document.createElement("div");
+            var messageText = document.createElement("div");
+            var messageInfo = document.createElement("div");
+
+            messageText.textContent = data.message;
+            messageText.classList.add("message-text");
+
+            messageContainer.classList.add("message");
+            messageContainer.classList.add("other-message"); // Por defecto, los mensajes recibidos serán de otros usuarios
+
+            messageInfo.textContent = getCurrentTime();
+            messageInfo.classList.add("timestamp");
+
+            messageContainer.appendChild(messageText);
+            messageContainer.appendChild(messageInfo);
+
+            messages.appendChild(messageContainer); // Agregar mensaje al contenedor de mensajes
+            messages.scrollTop = messages.scrollHeight; // Scroll hasta el último mensaje
+        });
+
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            return hours + ":" + minutes;
+        }
+
+        function clearChat() {
+            var messages = document.getElementById("messages");
+            messages.innerHTML = "";
+        }
+    </script>
 </body>
 </html>
+
