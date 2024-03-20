@@ -104,3 +104,47 @@ body {
 .clear-button:hover {
     background-color: #d32f2f; /* Cambio de color al pasar el mouse */
 }
+
+.context-menu {
+    position: fixed;
+    z-index: 1000;
+    background-color: #333; /* Color de fondo del menú */
+    color: #fff; /* Color del texto del menú */
+    border-radius: 5px; /* Borde redondeado */
+    padding: 5px 0; /* Espaciado interno */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Sombra */
+}
+
+.context-menu-option {
+    padding: 8px 12px; /* Espaciado interno de las opciones */
+    cursor: pointer; /* Cursor al pasar sobre las opciones */
+}
+
+.context-menu-option:hover {
+    background-color: #555; /* Cambio de color al pasar el mouse sobre las opciones */
+}
+
+/* Agregar sombreado y margen a los mensajes seleccionados */
+.message.selected {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombreado */
+    margin: 10px; /* Margen */
+}
+
+/* Estilo mejorado para el botón de eliminar seleccionado */
+#deleteButton {
+    display: none;
+    padding: 10px 20px;
+    background-color: #ff6659; /* Color del botón de eliminar seleccionado */
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Espacio superior */
+}
+
+#deleteButton:hover {
+    background-color: #e63a32; /* Cambio de color al pasar el mouse */
+}

@@ -18,78 +18,12 @@
                 <button type="submit" class="send-button" id="sendButton">Send</button>
             </div>
             <button type="button" class="clear-button" id="clearButton">Delete Chat</button>
+            <button id="deleteButton" class="clear-button" style="display: none;">Delete Selected</button> <!-- Botón de eliminar -->
         </div>
+        
     </div>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-    <script>
-        // Obtener el nombre de usuario de alguna manera (aquí lo establecemos manualmente)
-        var currentUser = "Usuario";
-    
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        var messageInput = document.getElementById("messageInput");
-        var sendButton = document.getElementById("sendButton");
-        var clearButton = document.getElementById("clearButton");
-    
-        sendButton.onclick = sendMessage;
-        clearButton.onclick = clearChat;
-        messageInput.addEventListener("keypress", function(event) {
-            if (event.keyCode === 13) {
-                sendMessage(event);
-            }
-        });
-    
-        function sendMessage(event) {
-            event.preventDefault();
-            var message = messageInput.value.trim();
-            if (message !== "") {
-                var data = {
-                    message: message
-                };
-                socket.emit('message', data);
-                messageInput.value = "";
-            }
-        }
-    
-        socket.on('message', function(data) {
-            var messages = document.getElementById("messages");
-            var messageContainer = document.createElement("div");
-            var messageText = document.createElement("div");
-            var messageInfo = document.createElement("div");
-    
-            messageText.textContent = data.message;
-            messageText.classList.add("message-text");
-    
-            messageContainer.classList.add("message");
-            if (data.username === currentUser) {
-                messageContainer.classList.add("my-message");
-            } else {
-                messageContainer.classList.add("other-message");
-            }
-    
-            messageInfo.textContent = getCurrentTime();
-            messageInfo.classList.add("timestamp");
-    
-            messageContainer.appendChild(messageText);
-            messageContainer.appendChild(messageInfo);
-    
-            messages.appendChild(messageContainer);
-            messages.scrollTop = messages.scrollHeight; // Scroll hasta el último mensaje
-        });
-    
-        function getCurrentTime() {
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            hours = hours < 10 ? "0" + hours : hours;
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            return hours + ":" + minutes;
-        }
-    
-        function clearChat() {
-            var messages = document.getElementById("messages");
-            messages.innerHTML = "";
-        }
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 </html>
