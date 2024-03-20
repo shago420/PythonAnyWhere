@@ -1,47 +1,51 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #24292e;
-    color: #fff;
-}
-
-#container {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #2d333b;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#messages {
-    list-style-type: none;
     padding: 0;
+    background-color: #f5f5f5;
+}
+
+.chat-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.chat-header h1 {
     margin: 0;
 }
 
 .message-container {
-    margin-bottom: 10px;
-    overflow: hidden;
+    padding: 20px;
+    overflow-y: scroll;
+    max-height: 400px;
 }
 
 .message {
     padding: 10px;
     border-radius: 8px;
-    max-width: 80%;
-    clear: both;
-    overflow-wrap: break-word;
+    display: inline-block;
 }
 
-.message-text {
+.my-message {
+    background-color: #007bff;
     color: #fff;
-    font-size: 16px;
+    align-self: flex-end;
+}
+
+.other-message {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 .message-info {
@@ -69,35 +73,35 @@ h1 {
     float: right;
 }
 
-#messageForm {
+.message-form {
     display: flex;
-    margin-top: 20px;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid #ddd;
 }
 
-#messageInput {
+.message-input {
     flex: 1;
     padding: 10px;
-    border: 1px solid #4f5764;
-    border-radius: 25px;
-    font-size: 16px;
-    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
     outline: none;
     background-color: #2d333b;
     color: #fff;
 }
 
-#sendButton {
+.send-button {
     padding: 10px 20px;
     background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 25px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     outline: none;
 }
 
-#sendButton:hover {
+.send-button:hover {
     background-color: #0056b3;
 }
 
