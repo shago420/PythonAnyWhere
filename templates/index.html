@@ -5,71 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Python IO</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
-
 </head>
-
 <body>
-    
     <div id="container">
-        <h1>Socket IO Chat</h1>
-        <ul id="messages"></ul>
-        <form id="messageForm">
-            <input type="text" id="messageInput" autocomplete="off" placeholder="Type a message...">
-            <button type="submit" id="sendButton">Send</button>
-            <button type="button" id="clearButton">Clear Chat</button>
-        </form>
+        <div class="chat-header">
+            <h1>Socket IO Chat</h1>
+        </div>
+        <div class="chat-body" id="messages"></div>
+        <div class="message-form">
+            <input type="text" class="message-input" id="messageInput" autocomplete="off" placeholder="Type a message...">
+            <button type="submit" class="send-button" id="sendButton">Send</button>
+            <button type="button" class="clear-button" id="clearButton">Clear Chat</button>
+        </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script>
+        // Obtener el nombre de usuario de alguna manera (aquí lo establecemos manualmente)
+        var currentUser = "Usuario";
+    
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         var messageInput = document.getElementById("messageInput");
         var sendButton = document.getElementById("sendButton");
         var clearButton = document.getElementById("clearButton");
-
+    
         sendButton.onclick = sendMessage;
         clearButton.onclick = clearChat;
-
+        messageInput.addEventListener("keypress", function(event) {
+            if (event.keyCode === 13) {
+                sendMessage(event);
+            }
+        });
+    
         function sendMessage(event) {
             event.preventDefault();
             var message = messageInput.value.trim();
             if (message !== "") {
                 var data = {
-                    username: "Usuario", // Aquí puedes obtener el nombre de usuario de alguna manera
+                    username: currentUser,
                     message: message
                 };
                 socket.emit('message', data);
                 messageInput.value = "";
             }
         }
-
-        function clearChat() {
-            var messages = document.getElementById("messages");
-            messages.innerHTML = "";
-        }
-
+    
         socket.on('message', function(data) {
             var messages = document.getElementById("messages");
-            var li = document.createElement("li");
             var messageContainer = document.createElement("div");
             var messageText = document.createElement("div");
             var messageInfo = document.createElement("div");
-
+            var messageActions = document.createElement("div");
+            var deleteButton = document.createElement("button");
+    
             messageText.textContent = data.message;
             messageText.classList.add("message-text");
-            messageContainer.appendChild(messageText);
-
+    
+            messageContainer.classList.add("message");
+            if (data.username === currentUser) {
+                messageContainer.classList.add("my-message");
+            } else {
+                messageContainer.classList.add("other-message");
+            }
+    
             messageInfo.textContent = "[" + getCurrentTime() + "] " + data.username;
             messageInfo.classList.add("message-info");
+    
+            messageActions.classList.add("message-actions");
+            if (data.username === currentUser) {
+                deleteButton.textContent = "Delete";
+                deleteButton.classList.add("delete-button");
+                deleteButton.addEventListener("click", function() {
+                    deleteMessage(messageContainer);
+                });
+                messageActions.appendChild(deleteButton);
+            }
+    
+            messageContainer.appendChild(messageText);
             messageContainer.appendChild(messageInfo);
-
-            messageContainer.classList.add("message");
-            messageContainer.classList.add(data.fromMe ? "message-from-me" : "message-from-others");
-
-            li.appendChild(messageContainer);
-            messages.appendChild(li);
+            messageContainer.appendChild(messageActions);
+    
+            messages.appendChild(messageContainer);
+            messages.scrollTop = messages.scrollHeight; // Scroll hasta el último mensaje
         });
-
+    
         function getCurrentTime() {
             var now = new Date();
             var hours = now.getHours();
@@ -77,6 +96,15 @@
             hours = hours < 10 ? "0" + hours : hours;
             minutes = minutes < 10 ? "0" + minutes : minutes;
             return hours + ":" + minutes;
+        }
+    
+        function clearChat() {
+            var messages = document.getElementById("messages");
+            messages.innerHTML = "";
+        }
+    
+        function deleteMessage(messageContainer) {
+            messageContainer.remove();
         }
     </script>
 </body>
